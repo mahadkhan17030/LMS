@@ -12,7 +12,8 @@ const firebaseConfig = {
     storageBucket: "software-lms-cada3.appspot.com",
     messagingSenderId: "595895974186",
     appId: "1:595895974186:web:f944bd9f8d7dd663ce0653",
-    measurementId: "G-ZYJ18KKD7Z"};
+    measurementId: "G-ZYJ18KKD7Z"
+};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -26,7 +27,7 @@ interface Admission {
   dateOfBirth: string;
 }
 
-const Admission: React.FC = () => {
+const AdmissionForm: React.FC = () => {
   const [admissions, setAdmissions] = useState<Admission[]>([]);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -38,7 +39,7 @@ const Admission: React.FC = () => {
   }, []);
 
   const fetchAdmissions = async () => {
-    const querySnapshot = await getDocs(collection(db, 'admissions'));
+    const querySnapshot = await getDocs(collection(db, 'Admission'));
     const admissionsList: Admission[] = [];
     querySnapshot.forEach((doc) => {
       admissionsList.push({ id: doc.id, ...doc.data() } as Admission);
@@ -49,7 +50,7 @@ const Admission: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await addDoc(collection(db, 'admissions'), {
+      await addDoc(collection(db, 'Admission'), {
         name,
         email,
         course,
@@ -67,7 +68,7 @@ const Admission: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await deleteDoc(doc(db, 'admissions', id));
+      await deleteDoc(doc(db, 'Admission', id));
       fetchAdmissions();
     } catch (error) {
       console.error('Error deleting admission: ', error);
@@ -78,7 +79,7 @@ const Admission: React.FC = () => {
     const newName = prompt('Enter new name', admission.name);
     if (newName) {
       try {
-        await updateDoc(doc(db, 'admissions', admission.id), { name: newName });
+        await updateDoc(doc(db, 'Admission', admission.id), { name: newName });
         fetchAdmissions();
       } catch (error) {
         console.error('Error updating admission: ', error);
@@ -225,4 +226,4 @@ const ActionButton = styled.button`
   }
 `;
 
-export default Admission;
+export default AdmissionForm;

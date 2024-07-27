@@ -42,14 +42,14 @@ const ExamSchedule: React.FC = () => {
 
   const fetchSchedules = async () => {
     const querySnapshot = await getDocs(collection(db, 'ExamSchedule'));
-    const scheduleList: ExamScheduleItem[] = [];
-    querySnapshot.forEach((doc) => {
-      scheduleList.push({ id: doc.id, ...doc.data() } as ExamScheduleItem);
-    });
+    const scheduleList: ExamScheduleItem[] = querySnapshot.docs.map(doc => ({ 
+      id: doc.id, 
+      ...doc.data() 
+    } as ExamScheduleItem));
     setSchedules(scheduleList);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       if (editingId) {

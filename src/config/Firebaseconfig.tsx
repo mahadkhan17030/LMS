@@ -1,4 +1,4 @@
-// firebaseConfig.ts
+// firebaseConfig.tsx
 
 import { initializeApp } from "firebase/app";
 

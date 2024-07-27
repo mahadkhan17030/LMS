@@ -1,33 +1,24 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
-// student 
+import Protected from '../pages/nestedPages/protected.tsx'
 import StudentAddEdit from "./nestedPages/StudentAddEdit.tsx";
 import Studentlist from "./nestedPages/Studentlist.tsx";
 import Transferstudent from "./nestedPages/Transferstudent.tsx";
-// teacher 
 import TeacherAddEdit from "./nestedPages/TeacherAddEdit.tsx";
 import Teacherlist from "./nestedPages/Teacherlist.tsx";
 import Teacherallocation from "./nestedPages/Teacherallocation.tsx";
-// subject 
 import SubjectAddEdit from "./nestedPages/SubjectAddEdit.tsx";
 import Subjectlist from "./nestedPages/Subjectlist.tsx";
-// Registration
 import Registration from "./nestedPages/Registration.tsx";
-// syllabus 
 import Syllabusform from "./nestedPages/Syllabusform.tsx";
 import Syllabuslist from "./nestedPages/Syllabuslist.tsx";
-// class 
 import Classform from "./nestedPages/Classform.tsx";
 import Classlist from "./nestedPages/Classlist.tsx";
-// feestructure 
 import Feestructure from "./nestedPages/Feestructure.tsx";
 import Feesubmission from "./nestedPages/Feesubmission.tsx";
 import Feevoucher from "./nestedPages/Feevoucher.tsx";
-// Admission
 import Admission from "./nestedPages/Admission.tsx";
-// exam 
 import Examshedule from "./nestedPages/Examshedule.tsx";
 import Examresult from "./nestedPages/Examresult.tsx";
-
 import * as React from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -89,7 +80,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
   justifyContent: "flex-end",
 }));
@@ -276,26 +266,26 @@ export default function Dashboard() {
       <Main open={open}>
         <DrawerHeader />
         <Routes>
-          <Route path="StudentAddEdit" element={<StudentAddEdit />} />
-          <Route path="Studentlist" element={<Studentlist />} />
-          <Route path="Transferstudent" element={<Transferstudent />} />
-          <Route path="TeacherAddEdit" element={<TeacherAddEdit />} />
-          <Route path="Teacherlist" element={<Teacherlist />} />
-          <Route path="Teacherallocation" element={<Teacherallocation />} />
-          <Route path="SubjectAddEdit" element={<SubjectAddEdit />} />
-          <Route path="Subjectlist" element={<Subjectlist />} />
-          <Route path="Registration" element={<Registration />} />
-          <Route path="Syllabusform" element={<Syllabusform />} />
-          <Route path="Syllabuslist" element={<Syllabuslist />} />
-          <Route path="Classform" element={<Classform />} />
-          <Route path="Classlist" element={<Classlist />} />
-          <Route path="Feestructure" element={<Feestructure />} />
-          <Route path="Feesubmission" element={<Feesubmission />} />
-          <Route path="Feevoucher" element={<Feevoucher />} />
-          <Route path="Admission" element={<Admission />} />
-          <Route path="Examshedule"element={<Examshedule />} />
-          <Route path="Examresult" element={<Examresult />} />
-        </Routes>
+  <Route path="StudentAddEdit" element={<Protected component={StudentAddEdit} />} />
+  <Route path="Studentlist" element={<Protected component={Studentlist} />} />
+  <Route path="Transferstudent" element={<Protected component={Transferstudent} />} />
+  <Route path="TeacherAddEdit" element={<Protected component={TeacherAddEdit} />} />
+  <Route path="Teacherlist" element={<Protected component={Teacherlist} />} />
+  <Route path="Teacherallocation" element={<Protected component={Teacherallocation} />} />
+  <Route path="SubjectAddEdit" element={<Protected component={SubjectAddEdit} />} />
+  <Route path="Subjectlist" element={<Protected component={Subjectlist} />} />
+  <Route path="Registration" element={<Protected component={Registration} />} />
+  <Route path="Syllabusform" element={<Protected component={Syllabusform} />} />
+  <Route path="Syllabuslist" element={<Protected component={Syllabuslist} />} />
+  <Route path="Classform" element={<Protected component={Classform} />} />
+  <Route path="Classlist" element={<Protected component={Classlist} />} />
+  <Route path="Feestructure" element={<Protected component={Feestructure} />} />
+  <Route path="Feesubmission" element={<Protected component={Feesubmission} />} />
+  <Route path="Feevoucher" element={<Protected component={Feevoucher} />} />
+  <Route path="Admission" element={<Protected component={Admission} />} />
+  <Route path="Examshedule" element={<Protected component={Examshedule} />} />
+  <Route path="Examresult" element={<Protected component={Examresult} />} />
+</Routes>
       </Main>
     </Box>
   );

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { getDatabase, ref, onValue, update, remove } from 'firebase/database';
+import { getDatabase, ref, onValue, update, remove, push } from 'firebase/database';
 import app from '../../config/Firebaseconfig';
 
 const database = getDatabase(app);
@@ -11,21 +11,20 @@ interface Student {
   currentClass: string;
 }
 
-interface Class {
-  id: string;
-  name: string;
-}
+const classOptions = [
+  'Prep', 'One', 'Two', 'Three', 'Four', 'Five',
+  'Six', 'Seven', 'Eight', 'Nine', 'Matric'
+];
 
 const TransferStudent: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
-  const [classes, setClasses] = useState<Class[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<string>('');
   const [targetClass, setTargetClass] = useState<string>('');
   const [transferredStudents, setTransferredStudents] = useState<{[key: string]: Student[]}>({});
 
   useEffect(() => {
     const studentsRef = ref(database, 'StudentsaddEdit');
-    const classesRef = ref(database, 'classeLevel');
+    const transferredStudentsRef = ref(database, 'transferredStudents');
 
     onValue(studentsRef, (snapshot) => {
       const data = snapshot.val();
@@ -36,50 +35,55 @@ const TransferStudent: React.FC = () => {
           currentClass: student.currentClass,
         }));
         setStudents(studentList);
-        
-        // Group transferred students by class
-        const grouped = studentList.reduce((acc, student) => {
-          if (!acc[student.currentClass]) {
-            acc[student.currentClass] = [];
-          }
-          acc[student.currentClass].push(student);
-          return acc;
-        }, {} as {[key: string]: Student[]});
-        setTransferredStudents(grouped);
       }
     });
 
-    onValue(classesRef, (snapshot) => {
+    onValue(transferredStudentsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const classList = Object.entries(data).map(([id, classData]: [string, any]) => ({
-          id,
-          name: classData.name,
-        }));
-        setClasses(classList);
+        const grouped = Object.entries(data).reduce((acc, [id, student]: [string, any]) => {
+          const { currentClass } = student;
+          if (!acc[currentClass]) {
+            acc[currentClass] = [];
+          }
+          acc[currentClass].push({ id, ...student });
+          return acc;
+        }, {} as {[key: string]: Student[]});
+        setTransferredStudents(grouped);
       }
     });
   }, []);
 
   const handleTransfer = () => {
     if (selectedStudent && targetClass) {
-      const studentRef = ref(database, `StudentsaddEdit/${selectedStudent}`);
-      update(studentRef, { currentClass: targetClass })
-        .then(() => {
-          alert('Student transferred successfully!');
-          setSelectedStudent('');
-          setTargetClass('');
+      const student = students.find(s => s.id === selectedStudent);
+      if (student) {
+        const transferredStudentsRef = ref(database, 'transferredStudents');
+        push(transferredStudentsRef, {
+          name: student.name,
+          previousClass: student.currentClass,
+          currentClass: targetClass,
         })
-        .catch((error) => {
-          console.error('Error transferring student:', error);
-          alert('Failed to transfer student. Please try again.');
-        });
+          .then(() => {
+            const studentRef = ref(database, `StudentsaddEdit/${selectedStudent}`);
+            return update(studentRef, { currentClass: targetClass });
+          })
+          .then(() => {
+            alert('Student transferred successfully!');
+            setSelectedStudent('');
+            setTargetClass('');
+          })
+          .catch((error) => {
+            console.error('Error transferring student:', error);
+            alert('Failed to transfer student. Please try again.');
+          });
+      }
     }
   };
 
   const handleDelete = (studentId: string) => {
     if (window.confirm('Are you sure you want to delete this student?')) {
-      const studentRef = ref(database, `StudentsaddEdit/${studentId}`);
+      const studentRef = ref(database, `transferredStudents/${studentId}`);
       remove(studentRef)
         .then(() => {
           alert('Student deleted successfully!');
@@ -116,9 +120,9 @@ const TransferStudent: React.FC = () => {
           onChange={(e) => setTargetClass(e.target.value)}
         >
           <option value="">Select Target Class</option>
-          {classes.map((cls) => (
-            <option key={cls.id} value={cls.id}>
-              {cls.name}
+          {classOptions.map((cls) => (
+            <option key={cls} value={cls}>
+              {cls}
             </option>
           ))}
         </Select>
